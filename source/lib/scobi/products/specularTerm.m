@@ -55,8 +55,8 @@ gnd_structure_id = GndParams.getInstance.gnd_structure_id;
 calc_diel_profile_fit_functions = [];
 if gnd_structure_id == Constants.ID_GND_MULTI_LAYERED
     calc_diel_profile_fit_functions = GndMLParams.getInstance.calc_diel_profile_fit_functions;
+    calculate_penetration_depth = GndMLParams.getInstance.calculate_penetration_depth;
 end
-calculate_penetration_depth = GndMLParams.getInstance.calculate_penetration_depth;
 % Bistatic Dynamic Parameters
 AllPoints_m = BistaticDynParams.getInstance.AllPoints_m;
 AngS2R_rf = BistaticDynParams.getInstance.AngS2R_rf; % SP->Rx Rotation Angle
@@ -300,11 +300,13 @@ for ii = 1 : num_diel_profiles
         writeVarIncremental(pathname_reflectivity{1,ii}, filename_bare_02, sim_counter, P0_coh2b(:,ii) );
         
         % Penetration depth
-        if calculate_penetration_depth
-             pdval = pd_cell{ii,:};
-             writeVarIncremental(pathname_pen_dep{1,ii}, filename_pendep_1, sim_counter, pdval(1) );
-             writeVarIncremental(pathname_pen_dep{1,ii}, filename_pendep_2, sim_counter, pdval(2) );
-             clear pdval;
+        if gnd_structure_id == Constants.ID_GND_MULTI_LAYERED
+            if calculate_penetration_depth
+                 pdval = pd_cell{ii,:};
+                 writeVarIncremental(pathname_pen_dep{1,ii}, filename_pendep_1, sim_counter, pdval(1) );
+                 writeVarIncremental(pathname_pen_dep{1,ii}, filename_pendep_2, sim_counter, pdval(2) );
+                 clear pdval;
+            end
         end
     
     end
@@ -353,6 +355,9 @@ dKz_s = squeeze(dKz(:, ANGDEG == round(thsd), :)) ;
 %% Transmissivity Matrix
 ArgH = 0 ;
 ArgV = 0 ;
+
+% initialize blank penetration depth storage
+pd_cell = {};
 
 % If ground cover is Vegetation-cover
 if gnd_cover_id == Constants.ID_VEG_COVER

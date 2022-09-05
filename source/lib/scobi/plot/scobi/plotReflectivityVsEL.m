@@ -78,12 +78,24 @@ RMSH_list_cm = ConfigParams.getInstance.RMSH_list_cm;
 el0_Tx_list_deg = unique(el0_Tx_list_deg);
 el0_Tx_list_deg = el0_Tx_list_deg';
 
+% get end limits
+[~,~,no_sims] = get_mat_size( dir_products_specular_reflectivity, 'Bare1' );
+
+% If the sim was incomplete, filter out zero-values
+el0_Tx_list_deg     = row2colvec( el0_Tx_list_deg(1:no_sims) );
+ph0_Tx_list_deg     = row2colvec( ph0_Tx_list_deg(1:no_sims) );
+VSM_list_cm3cm3     = row2colvec( VSM_list_cm3cm3(1:no_sims) );
+RMSH_list_cm        = row2colvec( RMSH_list_cm(1:no_sims) );
+
 % Find the coresponding parameter indices
 VSM_indices = VSM_list_cm3cm3 == VSM_cm3cm3_fixed;
 RMHSH_indices = RMSH_list_cm == RMSH_cm_fixed;
 ph0_indices = ph0_Tx_list_deg == ph0_Tx_deg_fixed;
 common_indices = VSM_indices & RMHSH_indices & ph0_indices;
 common_indices = common_indices';
+
+% filter out unused values from soil moisture plotting
+el0_Tx_list_deg_filt = el0_Tx_list_deg(common_indices);
 
 % % read Kc (KKc_dB should be added to relectivity when received power is considered)
 % Kc = readComplexVar(dir_products_specular, 'Kc') ;
@@ -130,17 +142,17 @@ if (pol_Tx == 'X') && (pol_Tx == 'X')
     bareVV_dB = 10 * log10(squeeze(P_bare1(1, :))) ;
     bareHH_dB = 10 * log10(squeeze(P_bare2(2, :))) ;
 
-    plot(el0_Tx_list_deg, bareVV_dB, ':or') % co-pol VV
+    plot(el0_Tx_list_deg_filt, bareVV_dB, ':or') % co-pol VV
     hold
-    plot(el0_Tx_list_deg, bareHH_dB, '-or') % co-pol HH
+    plot(el0_Tx_list_deg_filt, bareHH_dB, '-or') % co-pol HH
     
     % If ground coverf is Vegetation
     if gnd_cover_id == Constants.ID_VEG_COVER
         vegVV_dB = 10 * log10(squeeze(P_veg1(1, :))) ;
         vegHH_dB = 10 * log10(squeeze(P_veg2(2, :))) ;
 
-        plot(el0_Tx_list_deg, vegVV_dB, ':sg') % co-pol VV
-        plot(el0_Tx_list_deg, vegHH_dB, '-sg') % co-pol HH
+        plot(el0_Tx_list_deg_filt, vegVV_dB, ':sg') % co-pol VV
+        plot(el0_Tx_list_deg_filt, vegHH_dB, '-sg') % co-pol HH
     end
     
 else
@@ -148,17 +160,17 @@ else
     BareCO_dB = 10 * log10(squeeze(P_bare1(1, :))) ;
     BareX_dB = 10 * log10(squeeze(P_bare1(2, :))) ;
 
-    plot(el0_Tx_list_deg, BareCO_dB, ':or') % co-pol
+    plot(el0_Tx_list_deg_filt, BareCO_dB, ':or') % co-pol
     hold
-    plot(el0_Tx_list_deg, BareX_dB, '-or') % x-pol
+    plot(el0_Tx_list_deg_filt, BareX_dB, '-or') % x-pol
     
     % If ground coverf is Vegetation
     if gnd_cover_id == Constants.ID_VEG_COVER
         VegCO_dB = 10 * log10(squeeze(P_veg1(1, :))) ;
         VegX_dB = 10 * log10(squeeze(P_veg1(2, :))) ;
 
-        plot(el0_Tx_list_deg, VegCO_dB, ':sg') % co-pol
-        plot(el0_Tx_list_deg, VegX_dB, '-sg') % x-pol
+        plot(el0_Tx_list_deg_filt, VegCO_dB, ':sg') % co-pol
+        plot(el0_Tx_list_deg_filt, VegX_dB, '-sg') % x-pol
     end
 end
 
