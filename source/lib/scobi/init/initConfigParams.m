@@ -123,23 +123,23 @@ if sim_mode_id == Constants.ID_TIME_SERIES
        (num_RMSH == maxnum || num_RMSH == 1)
 
         if num_El == 1
-            el0_Tx_list_deg = repmat(el0_Tx_list_deg, 1, maxnum);
+            el0_Tx_list_deg = repmat(el0_Tx_list_deg, maxnum, 1);
         end
 
         if num_DoY == 1
-            DoYs = repmat(DoYs, 1, maxnum);
+            DoYs = repmat(DoYs, maxnum, 1);
         end
 
         if num_Ph == 1
-            ph0_Tx_list_deg = repmat(ph0_Tx_list_deg, 1, maxnum);
+            ph0_Tx_list_deg = repmat(ph0_Tx_list_deg, maxnum, 1);
         end
 
         if num_VSM == 1
-            VSM_list_cm3cm3 = repmat(VSM_list_cm3cm3, 1, maxnum);
+            VSM_list_cm3cm3 = repmat(VSM_list_cm3cm3, maxnum, 1);
         end     
 
         if num_RMSH == 1
-            RMSH_list_cm = repmat(RMSH_list_cm, 1, maxnum);
+            RMSH_list_cm = repmat(RMSH_list_cm, maxnum, 1);
         end 
 
     % input lengths are not valid for time-series, make all empty
